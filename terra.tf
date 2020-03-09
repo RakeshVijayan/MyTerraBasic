@@ -1,7 +1,7 @@
  provider "aws" {
   region = "ap-southeast-1"
 }
- #Creating security group
+
  
  resource "aws_security_group" "web-server" {
   name = "sg"
@@ -9,9 +9,7 @@
    tags = { 
     Name = "Terraform-instance-security-group"
     }
-
-# specify the inbound rules 
-  
+   
  ingress { 
       from_port = 22
       to_port   = 22
@@ -33,28 +31,19 @@
       cidr_blocks = ["0.0.0.0/0"]
 	}	
 
- egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-       }
-
  } 
 
 #Copy the public key from Local machine to remote
   resource "aws_key_pair" "ssh_key" {
   key_name   = "ssh_key"
-  public_key = "${file("/home/rvd/.ssh/id_rsa.pub")}"
+  public_key = file("/home/rvd/.ssh/id_rsa.pub")
 }
-
-#Create AWS Instance 
 
  resource "aws_instance" "web" {
   ami    = "ami-07ce5f60a39f1790e"
   instance_type = "t2.micro"
   security_groups = ["${aws_security_group.web-server.name}"]
-   key_name = "${aws_key_pair.ssh_key.id}"
+   key_name = aws_key_pair.ssh_key.id
 
 
  tags = {
@@ -63,7 +52,7 @@
 }
 
 resource "aws_eip" "lb" {
-  instance = "${aws_instance.web.id}"
+  instance = aws_instance.web.id
   vpc      = true
 }
 

@@ -1,7 +1,7 @@
  provider "aws" {
   region = "ap-southeast-1"
 }
-
+ #Creating security group
  
  resource "aws_security_group" "web-server" {
   name = "sg"
@@ -9,7 +9,9 @@
    tags = { 
     Name = "Terraform-instance-security-group"
     }
-   
+
+# specify the inbound rules 
+  
  ingress { 
       from_port = 22
       to_port   = 22
@@ -38,6 +40,8 @@
   key_name   = "ssh_key"
   public_key = "${file("/home/rvd/.ssh/id_rsa.pub")}"
 }
+
+#Create AWS Instance 
 
  resource "aws_instance" "web" {
   ami    = "ami-07ce5f60a39f1790e"
